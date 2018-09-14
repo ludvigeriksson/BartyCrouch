@@ -13,6 +13,7 @@ public class StringsFileUpdater {
 
     // MARK: - Stored Type Properties
     public static let defaultIgnoreKeys = ["#bartycrouch-ignore!", "#bc-ignore!", "#i!"]
+    public static let defaultIgnorePrefix = "#"
 
     // MARK: - Stored Instance Properties
     let path: String
@@ -36,7 +37,7 @@ public class StringsFileUpdater {
         addNewValuesAsEmpty: Bool, ignoreBaseKeysAndComment ignores: [String] = defaultIgnoreKeys,
         override: Bool = false, updateCommentWithBase: Bool = true, keepExistingKeys: Bool = false,
         overrideComments: Bool = false, sortByKeys: Bool = false, keepWhitespaceSurroundings: Bool = false,
-        ignoreEmptyStrings: Bool = false
+        ignoreEmptyStrings: Bool = false, ignorePrefix: String = defaultIgnorePrefix
     ) {
         do {
             let newContentString = try String(contentsOfFile: otherStringFilePath)
@@ -60,6 +61,7 @@ public class StringsFileUpdater {
                 for newTranslation in newTranslations {
                     // skip keys marked for ignore
                     guard !newTranslation.value.containsAny(of: ignores) else { continue }
+                    guard !newTranslation.value.hasPrefix(ignorePrefix) else { continue }
                     if ignoreEmptyStrings && newTranslation.value.trimmingCharacters(in: .whitespaces).isEmpty { continue }
 
                     // Skip keys that have been marked for ignore in comment
